@@ -8,13 +8,11 @@ const inter = Inter({ subsets: ["latin"] });
 
 const Engine = () => {
   const router = useRouter();
-  const data = router.query.data;
 
   const handleClickSearch = () => {
     // Navigate to the destination page when the button is clicked
     router.push({
       pathname: "/search-term",
-      query: { data },
     });
   };
 
@@ -22,7 +20,6 @@ const Engine = () => {
     // Navigate to the destination page when the button is clicked
     router.push({
       pathname: "/top-n",
-      query: { data },
     });
   };
 

@@ -1,18 +1,11 @@
 import React, { useState } from "react";
 
 import styles from "../styles/styles";
-import axios from "axios";
 import { useRouter } from "next/router";
 
-const url = "http://localhost:5000/api/search";
-const data = {
-  token: 123456,
-};
 
-const FileUploader = (loaded, setLoaded) => {
+const FileUploader = ({ setLoaded }) => {
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const [error, setError] = useState([]);
-  const [results, setResults] = useState([]);
   const router = useRouter();
 
   const handleFileInputChange = (event) => {
@@ -24,40 +17,51 @@ const FileUploader = (loaded, setLoaded) => {
     if (selectedFiles.length > 0) {
       const formData = new FormData();
       selectedFiles.forEach((file) => {
-        formData.append("file", file);
+        formData.append("files", file);
       });
 
-      // Set up credentials and storage client
-      const storage = require("@google-cloud/storage");
-      const storageClient = new storage.Storage({
-        keyFilename: "~/documents/keys/project1_gcs.json",
-      });
+      try {
+        const t0 = performance.now(); // start timer
+        setLoaded(true); // set loaded to true before sending the request
+        const response = await fetch("http://localhost:8000/upload", {
+          method: "POST",
+          body: formData,
+        });
 
-      // Set up bucket
-      const bucketName = "final-project-bucket-nico";
-      const bucket = storageClient.bucket(bucketName);
-      // Upload files to bucket
-      selectedFiles.forEach(async (file) => {
-        const blob = bucket.file(file.name);
-        const blobStream = blob.createWriteStream();
-        blobStream.on("error", (error) => {
-          console.log(error);
-        });
-        blobStream.on("finish", () => {
-          console.log(`File ${file.name} uploaded to ${bucketName}`);
-        });
-        blobStream.end(file.data);
-      });
-      
-      handleLoaded();
+        if (response.ok) {
+          console.log("Files uploaded successfully.");
+          const data = await response.json();
+          // Save the data in local storage
+          localStorage.setItem("hadoop-data", JSON.stringify(data));
+          console.log("Data stored in localStorage:", data);
+
+          // Check if the data has been set successfully
+          const storedData = localStorage.getItem("hadoop-data");
+          if (storedData) {
+            console.log("Data stored successfully:", JSON.parse(storedData));
+          } else {
+            console.log("Failed to store the data");
+          }
+
+          const t1 = performance.now(); // end timer
+          const execTime = t1 - t0;
+          console.log(execTime);
+          setLoaded(false); // set loaded to false when the response is received
+          handleLoaded(execTime);
+        } else {
+          console.error("Failed to upload files.");
+        }
+      } catch (err) {
+        console.error(err);
+      }
     }
   };
 
-  const handleLoaded = () => {
+  const handleLoaded = (execTime) => {
     // setLoaded(true);
     router.push({
       pathname: "/engine",
-      query: { data },
+      query: { execTime }
     });
   };
 

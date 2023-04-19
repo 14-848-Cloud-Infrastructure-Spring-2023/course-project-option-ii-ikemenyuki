@@ -9,7 +9,6 @@ const inter = Inter({ subsets: ["latin"] });
 
 const SearchTerm = () => {
   const router = useRouter();
-  const data = router.query.data;
   const [value, setValue] = useState("");
 
   const handleInputChange = (event) => {
@@ -20,7 +19,7 @@ const SearchTerm = () => {
     if (value.length) {
       router.push({
         pathname: "/search-result",
-        query: { ...data, value: value },
+        query: { value }
       });
     }
   };

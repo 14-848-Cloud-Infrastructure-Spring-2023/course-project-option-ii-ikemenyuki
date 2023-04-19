@@ -5,7 +5,6 @@ import styles from "../styles/styles";
 
 const TopN = () => {
   const router = useRouter();
-  const data = router.query.data;
   const [value, setValue] = useState("");
 
   const handleInputChange = (event) => {
@@ -16,7 +15,6 @@ const TopN = () => {
     if (value.length) {
       router.push({
         pathname: "/top-n-result",
-        query: { ...data, value: value },
       });
     }
   };

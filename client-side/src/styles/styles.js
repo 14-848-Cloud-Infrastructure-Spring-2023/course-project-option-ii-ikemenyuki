@@ -52,6 +52,29 @@ const styles = {
     height: "30px",
     marginTop: "6rem",
   },
+  spinnerContainer: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100vh",
+  },
+  spinner: {
+    width: "100px",
+    height: "100px",
+    borderRadius: "50%",
+    border: "10px solid #ccc",
+    borderTopColor: "#555",
+    animation: "spinner 0.8s infinite linear",
+    WebkitAnimation: "spinner 0.8s infinite linear",
+  },
+  "@keyframes spinner": {
+    from: {
+      transform: "rotate(0deg)",
+    },
+    to: {
+      transform: "rotate(360deg)",
+    },
+  },
 };
 
 export default styles;

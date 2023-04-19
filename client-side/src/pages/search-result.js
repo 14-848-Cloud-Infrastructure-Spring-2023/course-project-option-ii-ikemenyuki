@@ -11,8 +11,18 @@ const inter = Inter({ subsets: ["latin"] });
 
 const SearchResult = () => {
   const router = useRouter();
-  const data = router.query.value;
-  const [value, setValue] = useState("");
+  const value = router.query.value;
+  const [filterBy, setFilterBy] = useState(value);
+  const [data, setData] = useState([]);
+  const execTime = router.query.execTime;
+
+  useEffect(() => {
+    // Retrieve the data from local storage
+    const storedData = localStorage.getItem('hadoop-data');
+    if (storedData) {
+      setData(JSON.parse(storedData));
+    }
+  }, []);
 
   return (
     <div>
@@ -36,11 +46,11 @@ const SearchResult = () => {
           marginTop: "1rem",
         }}
       >
-        <h1>{"You searched for the term: " + data}</h1>
-        <h1>Your search was executed in XXX ms</h1>
+        <h1>{"You searched for the term: " + filterBy}</h1>
+        <h1>{`Your search was executed in ${execTime} ms`}</h1>
       </div>
       <div style={styles.marginTopHeader}>
-        <Grid data={dataset} />
+        <Grid data={data} term={value} filterBy={filterBy} setFilterBy={setFilterBy} isSearch={true} />
       </div>
     </div>
   );

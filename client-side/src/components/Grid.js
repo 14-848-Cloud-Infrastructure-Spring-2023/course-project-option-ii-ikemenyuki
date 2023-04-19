@@ -1,29 +1,37 @@
 import React, { useState } from "react";
 
-function Grid({ data, pageSize = 10 }) {
+function Grid({ data, pageSize = 10, term = '', filterBy, setFilterBy, n, setN, isSearch = false }) {
+  if (n) {
+    pageSize = n;
+  }
   const [currentPage, setCurrentPage] = useState(0);
   const [sortBy, setSortBy] = useState(null);
-  const [filterBy, setFilterBy] = useState("");
 
   const totalPages = Math.ceil(data.length / pageSize);
 
-  const filteredData = data.filter((row) =>
-    Object.values(row).join("").toLowerCase().includes(filterBy.toLowerCase())
-  );
+  const filteredData = data.filter((row) => {
+    if (term === '') return true;
 
-  const sortedData = sortBy
-    ? [...filteredData].sort((a, b) =>
-        a[sortBy] > b[sortBy] ? 1 : b[sortBy] > a[sortBy] ? -1 : 0
-      )
-    : filteredData;
+    if (row.term) {
+      return row.term.toLowerCase().includes(filterBy.toLowerCase());
+    }
 
-  const paginatedData = sortedData.slice(
+    return false;
+  });
+
+
+  const paginatedData = filteredData.slice(
     currentPage * pageSize,
     currentPage * pageSize + pageSize
   );
 
   const handleFilterChange = (event) => {
-    setFilterBy(event.target.value);
+    if (isSearch) {
+      setFilterBy(event.target.value);
+    }
+    else {
+      setN(event.target.value);
+    }
     setCurrentPage(0);
   };
 
